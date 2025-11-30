@@ -6,10 +6,12 @@ import Dashboard from "./admin/pages/dashboard-main";
 import Application from "./admin/pages/application-main";
 import Tenants from "./admin/pages/tenants-main";
 import Rooms from "./admin/pages/rooms-main";
+import LoginPage from "./auth-pages/login-page";
 
 function App() {
   return (
     <Routes>
+      <Route path="/" element={<LoginPage />} />
       <Route path="/dashboard" element={<MainContainer />}>
         <Route index element={<Dashboard />} />
         <Route path="application" element={<Application />} />
