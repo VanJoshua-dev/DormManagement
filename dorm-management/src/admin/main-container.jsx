@@ -4,17 +4,17 @@ import Header from "./components/header";
 import { Outlet } from "react-router-dom";
 function MainContainer() {
   return (
-    <div className="grid grid-cols-5 grid-rows-8 min-h-screen">
-    <div className="row-span-8">
+    <div className="grid grid-cols-7 grid-rows-12 gap-0 min-h-screen">
+      <div className="row-span-12">
         <SideBar />
-    </div>
-    <div className="col-span-4 ">
+      </div>
+      <div className="col-span-6">
         <Header />
-    </div>
-    <div className="col-span-4 row-span-7 col-start-2 row-start-2">
+      </div>
+      <div className="col-span-6 row-span-11 col-start-2 row-start-2">
         <Outlet />
+      </div>
     </div>
-</div>
   );
 }
 

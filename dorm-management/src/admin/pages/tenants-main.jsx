@@ -1,9 +1,12 @@
 import React from 'react'
+import TenantsHeader from '../components/tenants-header'
+import TenantsTable from '../components/tenants-table'
 
 function Tenants() {
   return (
-    <div>
-      
+    <div className='min-h-full'>
+      <TenantsHeader />
+      <TenantsTable />
     </div>
   )
 }

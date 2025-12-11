@@ -4,12 +4,15 @@ import bg from "../assets/loginBg.jpg";
 function LoginPage() {
   return (
     <div
-      className="grid grid-cols-5 grid-rows-7 gap-4 min-h-screen bg-cover bg-center"
+      className="grid grid-cols-5 grid-rows-7 gap-4 min-h-screen bg-cover bg-center "
       style={{ backgroundImage: `url(${bg})` }}
     >
-      <div className="col-span-5 row-span-7 place-items-center place-content-center w-full h-full bg-black/60">
-        <div className="flex flex-col items-center justify-center py-10 px-15 rounded-sm shadow bg-white">
-          <h1 className="text-2xl font-medium">Login</h1>
+      <div className="col-span-5 row-span-7 place-items-center place-content-center w-full h-full bg-black/60 py-2 px-10">
+        <div className="flex flex-col items-center justify-center py-5 px-9 md:px-13 rounded-sm shadow bg-white">
+          <h1 className="text-xl md:text-2xl font-medium text-center">
+            Login to <br />
+            Dormitory Management
+          </h1>
           <form action="" className="flex flex-col gap-3">
             {/**
              * Input fields

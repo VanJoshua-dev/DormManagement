@@ -23,11 +23,11 @@ function Header() {
 
         <div className="flex items-center justify-center gap-4">
             <span>
-                <FaUserCircle size={50} />
+                <FaUserCircle size={40} />
             </span>
-
+              
             <div>
-                <h1 className="text-2xl font-medium">John Doe</h1>
+                <h1 className="text-xl font-medium">John Doe</h1>
                 <span className="text-blue-400 text-sm">System Admin</span>
             </div>
         </div>

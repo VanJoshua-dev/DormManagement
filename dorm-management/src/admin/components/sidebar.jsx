@@ -9,7 +9,7 @@ import clx from "clsx";
 import { useNavigate, useLocation } from "react-router-dom";
 
 function SideBar() {
-  const iconSize = 30;
+  const iconSize = 25;
   const location = useLocation();
   const navigate = useNavigate();
   const tabs = [
@@ -41,8 +41,11 @@ function SideBar() {
        */}
       <div className="w-full flex flex-col gap-4 ">
         <div className=" flex flex-col gap-2 py-4 px-2 border-b-2 border-white  items-center justify-center">
-          <img src={logo} className="w-25 h-25 rounded-full border-3" alt="" />
-          <h1 className="text-xl text-center font-bold text-white">
+          <div className="px-3 py-3 bg-white rounded-full border-3">
+             <img src={logo} className="w-20 h-20 rounded-full" alt="" />
+          </div>
+         
+          <h1 className="text-lg text-center font-bold text-white">
             Dormitory Management System
           </h1>
         </div>
@@ -59,7 +62,7 @@ function SideBar() {
               )}
             >
               <span className="text-gray-300">{tab.icon}</span>
-              <span className="text-xl text-white font-medium">
+              <span className="text-lg text-white font-medium">
                 {tab.tabName}
               </span>
             </li>
@@ -72,7 +75,7 @@ function SideBar() {
        */}
       <div className="w-full flex pt-3 px-4 border-t-2 border-white  items-center justify-center">
         <button className="px-2 py-2 min-w-full rounded-sm flex flex-row items-center justify-center gap-5 hover:bg-gray-500/40 transition-colors duration-300 cursor-pointer">
-          <span className="text-white text-xl">Logout</span>
+          <span className="text-white text-lg">Logout</span>
           <span className="text-gray-300">
             <IoLogOutSharp size={iconSize}/>
           </span>
