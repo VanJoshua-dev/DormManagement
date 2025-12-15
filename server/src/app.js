@@ -10,13 +10,18 @@ app.use(express.json());
 app.use(cors(corsOptions));
 app.use(cookieParser());
 
+import dashboard_route from "./routes/dashboard-routes.js"
 import rooms_route from "./routes/rooms-routes.js"
+import application_route from "./routes/application-routes.js"
+import tenants_routes from "./routes/tenants-routes.js";
+import auth_routes from "./routes/auth-routes.js"
 
 
-
-
-
+app.use("/api/dashboard", dashboard_route)
 app.use("/api/rooms", rooms_route);
+app.use("/api/application", application_route)
+app.use("/api/tenants", tenants_routes)
+app.use("/api/auth", auth_routes)
 
 app.get("/", (req, res) => {
   res.send(`<h1 style='color: blue; width: 100%; height: 100vh; text-align: center; font-size: 70px; display: flex; justify-content: center; align-items: center;'>Server is Running...</h1>`);

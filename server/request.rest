@@ -1,1 +1,31 @@
 GET http://localhost:3000/api/rooms/get_all_rooms
+
+###
+
+GET http://localhost:3000/api/dashboard/
+
+###
+GET http://localhost:3000/api/application/
+
+###
+GET http://localhost:3000/api/tenants/
+
+###
+GET http://localhost:3000/api/application/application_access
+
+###
+POST http://localhost:3000/api/application/update_access
+Content-Type: application/json
+
+{
+    "status": true
+}
+
+###
+POST http://localhost:3000/api/auth/
+Content-Type: application/json
+
+{
+    "username": "Van123",
+    "password": "van1234"
+}

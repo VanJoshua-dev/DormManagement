@@ -1,3 +1,6 @@
+@import "tailwindcss";
+@plugin 'lightswind/plugin';
+
 body {
   font-family: 'Inter Variable', sans-serif;
 }

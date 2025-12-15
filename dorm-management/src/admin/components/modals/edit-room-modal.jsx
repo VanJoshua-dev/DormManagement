@@ -1,12 +1,21 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { TbHomeEdit } from "react-icons/tb";
+import { useEditRoom } from "../../../services/room-module-services.js";
 function EditRoom({ onSave, onClose, room }) {
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   onSave();
+  // };
+  console.log(room)
+  
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    onSave();
-  };
+  const [room_number, setRoomNumber] = useState(room.roomNumber);
+  const [capacity, setRoomCapacity] = useState(room.capacity);
+  const [gender, setRoomGender] = useState(room.roomGender);
+  const [room_type, setRoomType] = useState(room.roomType);
+  const room_id = room.roomId;
+  const {loading, handleSubmit} = useEditRoom({room_number, room_type, capacity, gender, room_id}, () => {onClose();})
 
   return (
     <AnimatePresence>
@@ -32,8 +41,9 @@ function EditRoom({ onSave, onClose, room }) {
             <div className="w-full py-2 px-3 flex flex-col gap-2">
               <label className="text-md font-semibold">Room Number</label>
               <input
-                type="number"
-                value={room.roomNo}
+                type="text"
+                value={room_number}
+                onChange={(e) => setRoomNumber(e.target.value)}
                 className="py-2 px-2 rounded-sm border border-gray-400"
                 placeholder="Enter room number"
                 required
@@ -45,10 +55,26 @@ function EditRoom({ onSave, onClose, room }) {
             </p>
 
             <div className="w-full py-2 px-6 flex flex-col gap-2">
+              <label className="text-md font-semibold">Room Type</label>
+              <select 
+              className="py-2 px-2 rounded-sm border border-gray-400"
+              value={room_type}
+              onChange={(e) => setRoomType(e.target.value)}
+              >
+                <option value="">- Select Room Type -</option>
+                <option value="Single">Single</option>
+                <option value="Double">Double</option>
+                <option value="Triple">Triple</option>
+                <option value="Quad">Quad</option>
+              </select>
+            </div>
+
+            <div className="w-full py-2 px-6 flex flex-col gap-2">
               <label className="text-md font-semibold">Room Capacity</label>
               <input
                 type="number"
-                value={room.roomCapacity}
+                value={capacity}
+                onChange={(e) => setRoomCapacity(e.target.value)}
                 className="py-2 px-2 rounded-sm border border-gray-400"
                 placeholder="Enter room capacity"
                 required
@@ -58,7 +84,8 @@ function EditRoom({ onSave, onClose, room }) {
             <div className="w-full py-2 px-6 flex flex-col gap-2">
               <label className="text-md font-semibold">Gender</label>
               <select
-              value={room.roomGender}
+                value={gender}
+                onChange={(e) => setRoomGender(e.target.value)}
                 className="py-2 px-2 rounded-sm border border-gray-400 cursor-pointer"
                 required
               >
@@ -71,6 +98,7 @@ function EditRoom({ onSave, onClose, room }) {
             <div className="w-full flex items-center mt-4 justify-end gap-3">
               <button
                 onClick={onClose}
+                disabled={loading}
                 type="button"
                 className="py-2 px-4 rounded-full text-md text-white bg-gray-400 hover:bg-gray-600 transition-colors duration-300 cursor-pointer"
               >
@@ -79,6 +107,7 @@ function EditRoom({ onSave, onClose, room }) {
 
               <button
                 type="submit"
+                disabled={loading}
                 className="py-2 px-4 rounded-full text-md text-white bg-blue-500 hover:bg-blue-600 transition-colors duration-300 cursor-pointer"
               >
                 Save

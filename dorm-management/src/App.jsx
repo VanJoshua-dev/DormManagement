@@ -8,7 +8,7 @@ import Tenants from "./admin/pages/tenants-main";
 import Rooms from "./admin/pages/rooms-main";
 import LoginPage from "./auth-pages/login-page";
 import ApplicationForm from "./application-form/application";
-
+import 'animate.css';
 function App() {
   return (
     <Routes>
