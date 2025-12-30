@@ -1,25 +1,53 @@
 import React, { useState, useEffect } from "react";
 import clx from "clsx";
+import Swal from "sweetalert2";
 import { IoCopySharp } from "react-icons/io5";
 import { useLocation } from "react-router-dom";
 import { TopLoader } from "../../components/lightswind/top-loader";
 import { useUpdateApplicationAccess } from "../../services/application-module-services";
 function ApplicationHeader({ onFilterChange, isFilter }) {
+  const Toast = Swal.mixin({
+    toast: true,
+    position: "top-right",
+    customClass: {
+      popup: "colored-toast",
+    },
+    showConfirmButton: false,
+    timer: 2500,
+    timerProgressBar: true,
+    showClass: {
+      popup: "animate_animated animate__fadeIn",
+    },
+    hideClass: {
+      popup: "animate__animated animate__bounceOutRight",
+    },
+  });
   const location = useLocation();
   const statusQuery = new URLSearchParams(location.search).get("status") || "";
 
-  const {loading, access, updateAccess } = useUpdateApplicationAccess();
-  
-  
+  const { loading, access, updateAccess } = useUpdateApplicationAccess();
+
   console.log(access);
-  
-  
+
   const [checked, setChecked] = useState(access);
 
-  
   const [generatedLink, setGeneratedLink] = useState(
-    "http://localhost:5173/student-application-form"
+    "http://localhost:5174/student-application-form"
   );
+
+  const handleCopy = () => {
+    navigator.clipboard
+      .writeText(generatedLink)
+      .then(() => {
+        Toast.fire({
+          icon: "success",
+          text: "Application Link Copied",
+        });
+      })
+      .catch((err) => {
+        console.error("Failed to copy: ", err);
+      });
+  };
   /**
    * When checked value change
    */
@@ -28,14 +56,12 @@ function ApplicationHeader({ onFilterChange, isFilter }) {
   const [status, setStatus] = useState(statusQuery);
   const [applied_date, setAppliedDate] = useState("");
 
- 
-
   useEffect(() => {
-      if (statusQuery) {
-        onFilterChange({ status: statusQuery });
-        isFilter();
-      }
-    }, [statusQuery]);
+    if (statusQuery) {
+      onFilterChange({ status: statusQuery });
+      isFilter();
+    }
+  }, [statusQuery]);
 
   const handleSearchChange = (e) => {
     setSearch(e.target.value);
@@ -65,7 +91,7 @@ function ApplicationHeader({ onFilterChange, isFilter }) {
     });
   };
 
-  if(loading) return <TopLoader isLoading={loading} />
+  if (loading) return <TopLoader isLoading={loading} />;
 
   return (
     <div className="px-5 py-5 w-full">
@@ -158,6 +184,7 @@ function ApplicationHeader({ onFilterChange, isFilter }) {
                 readOnly
               />
               <button
+                onClick={handleCopy}
                 title="Copy application form link"
                 className="hover:text-gray-400 cursor-pointer transition-all duration-300"
               >

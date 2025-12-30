@@ -48,11 +48,17 @@ const application_model = {
         }
     },
 
-    async check_application() {
+    async check_application(student_id) {
         const conn = await connect_db();
-        const [result] = await conn.execute(`SELECT * FROM applications WHERE status = "Approved" OR status = "On-Hold";`);
+        const [result] = await conn.execute(
+            `SELECT * FROM applications 
+         WHERE student_id_number = ? 
+         AND status IN ("Approved", "On-Hold")`,
+            [student_id]
+        );
         return result;
-    },
+    }
+    ,
 
     async post_application_form(student_id, first_name, last_name, gender, year_level, email, contact_number) {
         const conn = await connect_db();
@@ -71,19 +77,33 @@ const application_model = {
             // conn.release?.();
         }
     },
-    async application_accessibility(){
+    async application_accessibility() {
         const conn = await connect_db();
 
         const [rows] = await conn.execute("SELECT isOpen FROM application_form_accessibility;");
 
         return rows;
     },
-    async update_application_accessibility(status){
+    async update_application_accessibility(status) {
         const conn = await connect_db();
 
         const [rows] = await conn.execute("update application_form_accessibility set isOpen = ? where id = 1;", [status]);
 
         return rows.affectedRows;
+    },
+    async update_application_status(status, id) {
+        const conn = await connect_db();
+
+        const [rows] = await conn.execute("UPDATE applications SET status = ? WHERE id = ?", [status, id]);
+
+        return rows.affectedRows;
+    },
+    async room_assignment(room_id, tenant_id) {
+        const conn = await connect_db();
+
+        const [rows] = await conn.execute("INSERT INTO room_assignments (room_id, tenant_id, is_active) VALUES (?, ?, TRUE)", [room_id, tenant_id]);
+
+        return rows.insertId;
     }
 }
 

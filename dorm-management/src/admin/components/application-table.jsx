@@ -1,10 +1,17 @@
-import React, { useState } from "react";
+import React from "react";
 import clx from "clsx";
-
+import Swal from "sweetalert2";
 import noResult from "../../assets/search-cross-svgrepo-com.svg";
 import EmptyState from "../../assets/folder-open-svgrepo-com.svg";
+import { useApproveApplication } from "../../services/application-module-services";
+import { TopLoader } from "../../components/lightswind/top-loader";
+import { useRejectApplication } from "../../services/application-module-services";
 function ApplicationTable({ tableData, isFilter }) {
-  console.log(tableData);
+  const { loading, handleApprove } = useApproveApplication();
+  const { loading1, handleReject } = useRejectApplication();
+ 
+  if (loading || loading1) return <TopLoader isLoading={loading || loading1} />;
+
   if (!tableData || tableData.length === 0) {
     return (
       <div className="w-full flex flex-col items-center justify-center py-20 text-center">
@@ -19,95 +26,115 @@ function ApplicationTable({ tableData, isFilter }) {
             : "No application have been submitted yet"}
         </h1>
         <p className="text-gray-500 mt-1">
-          {isFilter ? (
-            "Try adjusting your filter settings."
-          ) : (
-            <span>Once students submit application, they will appear here.</span>
-          )}
+          {isFilter
+            ? "Try adjusting your filter settings."
+            : "Once students submit application, they will appear here."}
         </p>
       </div>
     );
   }
 
-  const handleStatusChange = async (status, id) => {
-    console.log(status)
-    console.log(id)
-  }
-
   return (
-    <div className="px-5 w-full">
-      <div className="w-full h-full px-1  rounded-sm">
-        <div className="w-full h-full overflow-hidden">
-          {/* Scrollable table body */}
-          <div className="overflow-y-auto max-h-full">
-            <table className="w-full table-auto border-collapse">
-              <thead className="bg-[#343A40] text-white sticky top-0 z-20">
-                <tr>
-                  <th className="px-4 py-3 text-left font-semibold">
-                    Student ID
-                  </th>
-                  <th className="px-4 py-3 text-left font-semibold">Name</th>
-                  <th className="px-4 py-3 text-left font-semibold">Gender</th>
-                  <th className="px-4 py-3 text-left font-semibold">
-                    Year Level
-                  </th>
-                  <th className="px-4 py-3 text-left font-semibold">Email</th>
-                  <th className="px-4 py-3 text-left font-semibold">
-                    Contact Number
-                  </th>
-                  <th className="px-4 py-3 text-left font-semibold">Status</th>
-                  <th className="px-4 py-3 text-left font-semibold">
-                    Date Applied
-                  </th>
-                </tr>
-              </thead>
+    <div className="px-5 w-full h-120">
+      <div className="w-full h-full shadow-[0px_0px_20px_1px_#cbd5e0] rounded-sm flex flex-col">
+        {/* SCROLL CONTAINER */}
+        <div className="flex-1 overflow-y-auto">
+          <table className="w-full border-collapse">
+            <thead className="bg-[#343A40] text-white sticky top-0 z-20">
+              <tr>
+                <th className="px-4 py-3 text-left">Student ID</th>
+                <th className="px-4 py-3 text-left">Name</th>
+                <th className="px-4 py-3 text-left">Gender</th>
+                <th className="px-4 py-3 text-left">Year</th>
+                <th className="px-4 py-3 text-left">Email</th>
+                <th className="px-4 py-3 text-left">Contact</th>
+                <th className="px-4 py-3 text-left">Status</th>
+                <th className="px-4 py-3 text-left">Date Applied</th>
+                <th className="px-4 py-3 text-center">Action</th>
+              </tr>
+            </thead>
 
-              <tbody className=" divide-y divide-gray-200">
-                {tableData.map((data, index) => (
-                  <tr key={index} className="hover:bg-gray-100 transition-colors duration-300">
-                    <td className="px-4 py-2">{data.studentIdNumber}</td>
-                    <td className="px-4 py-2">{data.firstName} {data.lastName}</td>
-                    <td className="px-4 py-2">{data.gender}</td>
-                    <td className="px-4 py-2">{data.yearLevel}</td>
-                    <td className="px-4 py-2">{data.email}</td>
-                    <td className="px-4 py-2">{data.contactNumber}</td>
-                    <td className={clx("px-4 py-2  font-medium")}>
-                      <select
-                        value={data.status}
-                        onChange={(e) => handleStatusChange(e.target.value, data.applicationId)}
+            <tbody className="divide-y divide-gray-200">
+              {tableData.map((data, index) => (
+                <tr key={index} className="hover:bg-gray-100 transition-colors">
+                  <td className="px-4 py-2">{data.studentIdNumber}</td>
+                  <td className="px-4 py-2">
+                    {data.firstName} {data.lastName}
+                  </td>
+                  <td className="px-4 py-2">{data.gender}</td>
+                  <td className="px-4 py-2">{data.yearLevel}</td>
+                  <td className="px-4 py-2">{data.email}</td>
+                  <td className="px-4 py-2">{data.contactNumber}</td>
+
+                  <td className="px-4 py-2">
+                    <span
+                      className={clx(
+                        "px-2 py-1 rounded-full text-white text-sm",
+                        data.status === "On-Hold" && "bg-amber-400",
+                        data.status === "Approved" && "bg-blue-400",
+                        data.status === "Rejected" && "bg-red-400"
+                      )}
+                    >
+                      {data.status}
+                    </span>
+                  </td>
+
+                  <td className="px-4 py-2">
+                    {data.dateApplied.split("T")[0]}
+                  </td>
+
+                  <td className="px-4 py-2">
+                    <div className="flex justify-center gap-2">
+                      <button
+                        onClick={() =>
+                          handleApprove(
+                            `${data.firstName} ${data.lastName}`,
+                            data.applicationId,
+                            data.gender
+                          )
+                        }
+                        disabled={
+                          data.status === "Approved" ||
+                          data.status === "Rejected"
+                        }
                         className={clx(
-                          " px-1 py-1 cursor-pointer border border-gray-300 rounded-full text-black  shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500",
-                          (data.status === "On-Hold" && "bg-amber-400 text-white") ||
-                            (data.status === "Approved" && "bg-blue-400 text-white") ||
-                          (data.status === "Rejected" && "bg-red-400 text-white")
+                          "px-3 py-1 rounded-full text-white text-sm transition",
+                          data.status === "Approved" ||
+                            data.status === "Rejected"
+                            ? "bg-gray-300 cursor-not-allowed"
+                            : "bg-blue-500 hover:bg-blue-600"
                         )}
                       >
-                        <option
-                          value={"On-Hold"}
-                          className="bg-white text-black"
-                        >
-                          On Hold
-                        </option>
-                        <option
-                          value={"Approved"}
-                          className="bg-white text-black"
-                        >
-                          Approved
-                        </option>
-                        <option
-                          value={"Rejected"}
-                          className="bg-white text-black"
-                        >
-                          Rejected
-                        </option>
-                      </select>
-                    </td>
-                    <td className="px-4 py-2 font-medium">{data.dateApplied.split("T")[0]}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                        Approve
+                      </button>
+
+                      <button
+                        onClick={() =>
+                          handleReject(
+                            `${data.firstName} ${data.lastName}`,
+                            data.applicationId
+                          )
+                        }
+                        disabled={
+                          data.status === "Approved" ||
+                          data.status === "Rejected"
+                        }
+                        className={clx(
+                          "px-3 py-1 rounded-full text-white text-sm transition",
+                          data.status === "Approved" ||
+                            data.status === "Rejected"
+                            ? "bg-gray-300 cursor-not-allowed"
+                            : "bg-red-500 hover:bg-red-600"
+                        )}
+                      >
+                        Reject
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>

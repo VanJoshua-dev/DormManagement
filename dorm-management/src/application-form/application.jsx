@@ -23,7 +23,6 @@ function ApplicationForm({ applicationAccessibility = false }) {
     contactNumber,
   });
 
-
   const whenClosed = (e) => {
     e.preventDefault();
     Swal.fire({
@@ -49,7 +48,9 @@ function ApplicationForm({ applicationAccessibility = false }) {
                 next opening.
               </p>
             </div>
-          ): <></>}
+          ) : (
+            <></>
+          )}
           <h1 className="text-2xl font-bold text-gray-700 mb-6">
             Dormitory Application Form
           </h1>

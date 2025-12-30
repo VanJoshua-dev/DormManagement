@@ -4,6 +4,8 @@ import { FaUserCircle } from "react-icons/fa";
 function Header() {
   const location = useLocation();
   const [headerLocation, setHeaderLocation] = useState("");
+  const user = JSON.parse(localStorage.getItem("user"));
+  console.log();
 
   useEffect(() => {
     const titles = {
@@ -22,14 +24,18 @@ function Header() {
         <span className="text-3xl font-semibold">{headerLocation}</span>
 
         <div className="flex items-center justify-center gap-4">
-            <span>
-                <FaUserCircle size={40} />
+          <span>
+            <FaUserCircle size={40} />
+          </span>
+
+          <div>
+            <h1 className="text-xl font-medium">
+              {user.name || "Unkown User"}
+            </h1>
+            <span className="text-blue-400 text-sm">
+              {user.role || "Unknown role"}
             </span>
-              
-            <div>
-                <h1 className="text-xl font-medium">John Doe</h1>
-                <span className="text-blue-400 text-sm">System Admin</span>
-            </div>
+          </div>
         </div>
       </div>
     </div>

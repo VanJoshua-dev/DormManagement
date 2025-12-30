@@ -29,3 +29,24 @@ Content-Type: application/json
     "username": "Van123",
     "password": "van1234"
 }
+###
+POST http://localhost:3000/api/application/auto_assign
+Content-Type: application/json
+
+{
+    "name": "Van Joshua Escalante",
+    "applicationd_id": "2",
+    "gender": "Male"
+}
+
+###
+PUT http://localhost:3000/api/rooms/change_room
+Content-Type: application/json
+
+{
+    "roomID": "3",
+    "tenantID": "3" 
+}
+
+###
+GET http://localhost:3000/api/rooms/room_roster/106

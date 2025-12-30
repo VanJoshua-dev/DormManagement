@@ -8,6 +8,7 @@ const tenants_model = {
             const query = `SELECT
                 t.id AS tenantID,
                 CONCAT(a.first_name, ' ', a.last_name) AS tenant_name,
+                a.gender AS Gender,
                 r.room_number,
                 t.move_in_date,
                 t.next_due_date AS due_date,
@@ -50,9 +51,87 @@ const tenants_model = {
 
             return rows;
         } finally {
-            //Do nothing -_-
+            //  Nothings
         }
-    }
+    },
+
+    async insert_tenant(application_id) {
+        const conn = await connect_db();
+
+        const [result] = await conn.execute(
+            `
+            INSERT INTO tenants 
+            (application_id, payment_status, next_due_date, move_in_date, status)
+            VALUES (?, 'Paid', DATE_ADD(CURDATE(), INTERVAL 4 MONTH), CURDATE(), 'Active')
+            `,
+            [application_id]
+        );
+
+        return result.insertId;
+    },
+
+    async update_payment_status(tenantID, status) {
+        const conn = await connect_db();
+
+        let query;
+        let params = [];
+
+        if (status === "Paid") {
+            query = `
+            UPDATE tenants 
+            SET 
+                payment_status = ?, 
+                next_due_date = DATE_ADD(next_due_date, INTERVAL 4 MONTH)
+            WHERE id = ?;
+        `;
+            params = [status, tenantID];
+        }
+        else if (status === "Overdue") {
+            query = `
+            UPDATE tenants 
+            SET payment_status = ?
+            WHERE id = ?;
+        `;
+            params = [status, tenantID];
+        }
+        else {
+            throw new Error("Invalid payment status");
+        }
+
+        const [result] = await conn.execute(query, params);
+        return result.affectedRows;
+    },
+
+    async update_tenant_info() {
+
+    },
+
+    async remove_tenant(tenantID) {
+        const conn = await connect_db();
+
+        const [result] = await conn.execute(
+            "UPDATE tenants SET move_out_date = CURDATE(), status = 'Inactive' WHERE id = ?;",
+            [tenantID]
+        )
+
+        return result.affectedRows
+    },
+
+    async deactivate_assignment(tenantID) {
+        const conn = await connect_db();
+
+        const [result] = await conn.execute(`UPDATE room_assignments
+            SET is_active = FALSE
+            WHERE tenant_id = ?
+            AND is_active = TRUE;`, [tenantID])
+
+
+        return result.affectedRows;
+    },
+
+    
+
+
 }
 
 export default tenants_model;

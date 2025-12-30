@@ -28,9 +28,19 @@ export const update_application_access_middleware = async (req, res, next) => {
     const { status } = req.body;
 
     console.log(status);
-    
+
     if (status === "") {
         return res.status(400).json({ success: false, error: true, message: "Missing status" })
     }
+    next();
+}
+
+export const reject_application_middleware = async (req, res, next) => {
+    const { status, applicationID } = req.body;
+
+    if (!status || !applicationID) {
+        return res.status(400).json({ success: false, error: false, message: "Missing body" })
+    }
+
     next();
 }

@@ -53,6 +53,9 @@ export const useSubmitApplication = ({ studentID, firstName, lastName, gender, y
     const [loading, setLoading] = useState(false);
     const [access, setAccess] = useState("");
 
+    console.log(studentID, firstName, lastName, gender, yearLevel, email, contactNumber);
+
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -135,8 +138,18 @@ export const useUpdateApplicationAccess = () => {
     const Toast = Swal.mixin({
         toast: true,
         position: "top-right",
+        customClass: {
+            popup: "colored-toast",
+        },
         showConfirmButton: false,
         timer: 2500,
+        timerProgressBar: true,
+        showClass: {
+            popup: "animate_animated animate__fadeIn",
+        },
+        hideClass: {
+            popup: "animate__animated animate__bounceOutRight",
+        },
     });
 
     const updateAccess = async (newStatus) => {
@@ -209,3 +222,157 @@ export const useUpdateApplicationAccess = () => {
     return { loading, access, updateAccess };
 };
 
+
+export const useApproveApplication = () => {
+    const [loading, setLoading] = useState(false);
+
+    const Toast = Swal.mixin({
+        toast: true,
+        position: "top-right",
+        customClass: {
+            popup: "colored-toast",
+        },
+        showConfirmButton: false,
+        timer: 2500,
+        timerProgressBar: true,
+        showClass: {
+            popup: "animate_animated animate__fadeIn",
+        },
+        hideClass: {
+            popup: "animate__animated animate__bounceOutRight",
+        },
+    });
+
+
+    const handleApprove = async (name, application_id, gender) => {
+
+
+        const result = await Swal.fire({
+            icon: "question",
+            title: "Are you sure?",
+            text: `You're about to approve ${name}'s application`,
+            showConfirmButton: true,
+            showCancelButton: true,
+            confirmButtonColor: "#2196F3",
+            confirmButtonText: "Approved",
+            cancelButtonText: "Cancel",
+            cancelButtonColor: "#9E9E9E"
+        })
+
+        if (result.isConfirmed) {
+            setLoading(true)
+            try {
+                const request = await axios.post("http://localhost:3000/api/application/auto_assign", {
+                    name,
+                    application_id,
+                    gender
+                })
+
+                if (request.status === 200) {
+                    Swal.fire({
+                        icon: "success",
+                        title: "Application Approved",
+                        text: request.data?.message,
+                        allowOutsideClick: false,
+                        draggable: false,
+                        showConfirmButton: true,
+                        confirmButtonText: "Ok",
+                        confirmButtonColor: "#2196F3"
+                    })
+                }
+            } catch (error) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Failed to submit application",
+                    text: "Network error or server is down",
+                    allowOutsideClick: false
+                })
+                console.error(error);
+
+            } finally {
+                setLoading(false)
+            }
+        }
+
+
+    }
+
+    return { loading, handleApprove };
+}
+
+
+export const useRejectApplication = () => {
+    const [loading1, setLoading] = useState(false);
+
+    const Toast = Swal.mixin({
+        toast: true,
+        position: "top-right",
+        customClass: {
+            popup: "colored-toast",
+        },
+        showConfirmButton: false,
+        timer: 2500,
+        timerProgressBar: true,
+        showClass: {
+            popup: "animate_animated animate__fadeIn",
+        },
+        hideClass: {
+            popup: "animate__animated animate__bounceOutRight",
+        },
+    });
+
+
+    const handleReject = async (name, application_id) => {
+
+
+        const result = await Swal.fire({
+            icon: "question",
+            title: "Are you sure?",
+            text: `You're about to reject ${name}'s application`,
+            showConfirmButton: true,
+            showCancelButton: true,
+            confirmButtonColor: "#F44336",
+            confirmButtonText: "Reject",
+            cancelButtonText: "Cancel",
+            cancelButtonColor: "#9E9E9E"
+        })
+
+        if (result.isConfirmed) {
+            setLoading(true)
+            try {
+                const request = await axios.patch("http://localhost:3000/api/application/reject_application", {
+                    status: "Rejected",
+                    applicationID: application_id,
+                })
+
+                if (request.status === 200) {
+                    Swal.fire({
+                        icon: "success",
+                        title: "Application Rejected",
+                        text: `${name}s application has been rejected`,
+                        allowOutsideClick: false,
+                        draggable: false,
+                        showConfirmButton: true,
+                        confirmButtonText: "Ok",
+                        confirmButtonColor: "#2196F3"
+                    })
+                }
+            } catch (error) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Failed to submit application",
+                    text: "Network error or server is down",
+                    allowOutsideClick: false
+                })
+                console.error(error);
+
+            } finally {
+                setLoading(false)
+            }
+        }
+
+
+    }
+
+    return { loading1, handleReject };
+}

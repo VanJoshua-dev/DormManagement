@@ -1,17 +1,28 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { TbHomePlus } from "react-icons/tb";
+import { LuUserRoundPen } from "react-icons/lu";
+import { MdOutlineChangeCircle } from "react-icons/md";
 import { useCreateRoom } from "../../../services/room-module-services.js";
-function EditTenant({onClose, selectedTenant }) {
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   onSubmit();
-  // };
-  const [room_number, setRoomNumber] = useState("");
-  const [room_type, setRoomType] = useState("");
-  const [capacity, setCapacity] = useState("");
-  const [gender, setGender] = useState("");
-  const {loading, handleSubmit} = useCreateRoom({room_number, room_type, capacity, gender}, () => {onClose();})
+import { useFetchAllRooms } from "../../../services/room-module-services.js";
+import { useChangeRoom } from "../../../services/tenants-services.js";
+import { TopLoader } from "../../../components/lightswind/top-loader.jsx";
+function EditTenant({ onClose, selectedTenant }) {
+  const [filters, setFilters] = useState({
+    search: "",
+    status: "Available",
+    type: "",
+    gender: selectedTenant.Gender,
+  });
+
+  const { loading, rooms } = useFetchAllRooms(filters);
+
+  const [roomID, setRoomID] = useState("");
+  const tenantID = selectedTenant.tenantID;
+  const name = selectedTenant.tenant_name;
+  const { loading2, handleSubmit } = useChangeRoom({ roomID, tenantID, name }, () => {onClose();});
+
+  if (loading2) return <TopLoader isLoading={loading2} />;
   return (
     <AnimatePresence>
       <motion.div
@@ -28,68 +39,30 @@ function EditTenant({onClose, selectedTenant }) {
           transition={{ duration: 0.25, ease: "easeOut" }}
         >
           <header className="flex items-center gap-2">
-            <TbHomePlus size={30} />
-            <span className="text-xl font-medium">Add new room</span>
+            <MdOutlineChangeCircle size={30} />
+            <span className="text-xl font-medium">Change room</span>
           </header>
 
           <form onSubmit={handleSubmit}>
-            <div className="w-full py-2 px-3 flex flex-col gap-2">
-              <label className="text-md font-semibold">Room Number</label>
-              <input
-                type="text"
-                value={room_number}
-                onChange={(e) => setRoomNumber(e.target.value)}
-                className="py-2 px-2 rounded-sm border border-gray-400"
-                placeholder="Enter room number"
-                required
-              />
-            </div>
-
-            <p className="text-lg text-gray-400 font-semibold px-3">
-              Room Details
-            </p>
-
             <div className="w-full py-2 px-6 flex flex-col gap-2">
-              <label className="text-md font-semibold">Room Type</label>
-              <select 
-              value={room_type}
-              onChange={(e) => setRoomType(e.target.value)}
-              className="py-2 px-2 rounded-sm border border-gray-400"
-              >
-                <option value="">- Select Room Type -</option>
-                <option value="Single">Single</option>
-                <option value="Double">Double</option>
-                <option value="Triple">Triple</option>
-                <option value="Quad">Quad</option>
-              </select>
-            </div>
-
-            <div className="w-full py-2 px-6 flex flex-col gap-2">
-              <label className="text-md font-semibold">Room Capacity</label>
-              <input
-                type="number"
-                value={capacity}
-                onChange={(e) => setCapacity(e.target.value)}
-                className="py-2 px-2 rounded-sm border border-gray-400"
-                placeholder="Enter room capacity"
-                required
-              />
-            </div>
-
-            <div className="w-full py-2 px-6 flex flex-col gap-2">
-              <label className="text-md font-semibold">Gender</label>
+              <label className="text-md font-semibold">
+                Current room: {selectedTenant.room_number}{" "}
+              </label>
               <select
-              value={gender}
-              onChange={(e) => setGender(e.target.value)}
-                className="py-2 px-2 rounded-sm border border-gray-400 cursor-pointer"
+                value={roomID}
+                onChange={(e) => setRoomID(e.target.value)}
+                className="py-2 px-2 rounded-sm border border-gray-400"
                 required
               >
-                <option value="">- Select Gender -</option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
+                <option value="">- Select new room -</option>
+                {rooms.map((room, index) => (
+                  <option key={index} value={room.roomId}>
+                    Room {room.roomNumber} (Remaining slot:{" "}
+                    {room.remainingSlots})
+                  </option>
+                ))}
               </select>
             </div>
-
             <div className="w-full flex items-center mt-4 justify-end gap-3">
               <button
                 onClick={onClose}

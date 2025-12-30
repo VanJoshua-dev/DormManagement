@@ -303,3 +303,50 @@ export const useDeleteRoom = () => {
     return { handleDelete };
 };
 
+export const useViewRoster = (roomNumber) => {
+
+    const [loading, setLoading] = useState(false);
+    const [roster, setRoster] = useState([]);
+
+    const Toast = Swal.mixin({
+        toast: true,
+        position: "top-right",
+        customClass: { popup: "colored-toast" },
+        showConfirmButton: false,
+        timer: 2500,
+        timerProgressBar: true,
+    });
+
+    const viewRoster = async () => {
+        if (!roomNumber) return;
+
+        try {
+            setLoading(true);
+
+            const { data } = await axios.get(
+                `http://localhost:3000/api/rooms/room_roster/${roomNumber}`
+            );
+
+            setRoster(data.roster || []);
+        } catch (error) {
+            Toast.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "Network error or server is down",
+            });
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        viewRoster();
+    }, [roomNumber]);
+
+    return {
+        loading,
+        roster,
+    };
+};
+

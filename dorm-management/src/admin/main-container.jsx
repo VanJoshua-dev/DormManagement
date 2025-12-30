@@ -10,7 +10,6 @@ function MainContainer() {
   useEffect(() => {
     if (user === null) {
       navigate("/", { replace: true });
-      
     }
   }, []);
 

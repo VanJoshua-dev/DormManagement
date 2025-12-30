@@ -28,7 +28,7 @@ async function connect_db() {
         waitForConnections: true,
         connectionLimit: 10, // Adjust based on your needs
         queueLimit: 0,
-        acquireTimeout: 60000,
+        acquireTimeout: 10000,
         timeout: 60000,
       });
 

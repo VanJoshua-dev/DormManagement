@@ -33,16 +33,24 @@ const dashboard_model = {
             `),
 
                 conn.execute(`
-                SELECT
-                    a.student_id_number,
-                    a.first_name,
-                    a.last_name,
-                    a.gender,
-                    a.year_level,
-                    a.status
-                FROM applications a
-                JOIN tenants t ON t.application_id = a.id
-                WHERE a.status = 'On-Hold'
+               SELECT
+                t.id AS tenantID,
+                CONCAT(a.first_name, ' ', a.last_name) AS tenant_name,
+                r.room_number,
+                t.move_in_date,
+                t.next_due_date AS due_date,
+                t.payment_status AS status
+            FROM tenants t
+            JOIN applications a 
+                ON t.application_id = a.id
+            JOIN room_assignments ra 
+                ON ra.tenant_id = t.id
+                AND ra.is_active = TRUE
+            JOIN rooms r 
+                ON ra.room_id = r.id
+            WHERE
+            t.status = 'Active' AND t.payment_status = 'Overdue'
+            ORDER BY due_date DESC;
             `)
             ]);
 
